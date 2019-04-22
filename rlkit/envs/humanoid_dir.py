@@ -1,11 +1,13 @@
 import numpy as np
 from gym.envs.mujoco import HumanoidEnv as HumanoidEnv
+from . import register_env
 
 def mass_center(model, sim):
     mass = np.expand_dims(model.body_mass, 1)
     xpos = sim.data.xipos
     return (np.sum(mass * xpos, 0) / np.sum(mass))
 
+@register_env('humanoid-dir')
 class HumanoidDirEnv(HumanoidEnv):
 
     def __init__(self, task={}, n_tasks=2):

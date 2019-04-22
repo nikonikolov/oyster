@@ -61,7 +61,7 @@ dependencies:
   - pyqt=5.6.0=py35_2
   - python=3.5.2=0
   - python-dateutil=2.6.1=py35_0
-  - pytorch=1.0.1=py3.5_cuda9.0.176_cudnn7.4.2_2
+  #- pytorch=1.0.1=py3.5_cuda10.0_cudnn7.4.2_2
   - pytz=2018.5=py35_0
   - qt=5.6.2=5
   - readline=6.2=2
@@ -80,7 +80,7 @@ dependencies:
   - pip:
     - atari-py==0.1.7
     - bleach==3.1.0
-    - box2d-kengz==2.3.3
+    #- box2d-kengz==2.3.3
     - chardet==3.0.4
     - click==7.0
     - cloudpickle==0.5.2

@@ -1,6 +1,8 @@
 import numpy as np
 from rlkit.envs.ant_multitask_base import MultitaskAntEnv
+from . import register_env
 
+@register_env('ant-dir')
 class AntDirEnv(MultitaskAntEnv):
 
     def __init__(self, task={}, n_tasks=2, forward_backward=False, **kwargs):

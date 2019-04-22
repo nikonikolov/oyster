@@ -11,6 +11,7 @@ import torch
 
 from rlkit.envs import ENVS
 from rlkit.envs.wrappers import NormalizedBoxEnv
+from rlkit.envs.render_wrapper import RenderWrapper
 from rlkit.torch.sac.policies import TanhGaussianPolicy
 from rlkit.torch.networks import FlattenMlp, MlpEncoder, RecurrentEncoder
 from rlkit.torch.sac.sac import PEARLSoftActorCritic
@@ -22,8 +23,19 @@ from configs.default import default_config
 
 def experiment(variant):
 
+    # debugging triggers a lot of printing and logs to a debug directory
+    DEBUG = variant['util_params']['debug']
+    os.environ['DEBUG'] = str(int(DEBUG))
+
+    # create logging directory
+    # TODO support Docker
+    exp_id = 'debug' if DEBUG else None
+    experiment_log_dir = setup_logger(variant['env_name'], variant=variant, exp_id=exp_id, base_log_dir=variant['util_params']['base_log_dir'])
+
     # create multi-task environment and sample tasks
-    env = NormalizedBoxEnv(ENVS[variant['env_name']](**variant['env_params']))
+    env = ENVS[variant['env_name']](**variant['env_params'])
+    env = RenderWrapper(env, experiment_log_dir)
+    env = NormalizedBoxEnv(env)
     tasks = env.get_all_task_idx()
     obs_dim = int(np.prod(env.observation_space.shape))
     action_dim = int(np.prod(env.action_space.shape))
@@ -93,14 +105,14 @@ def experiment(variant):
     if ptu.gpu_enabled():
         algorithm.to()
 
-    # debugging triggers a lot of printing and logs to a debug directory
-    DEBUG = variant['util_params']['debug']
-    os.environ['DEBUG'] = str(int(DEBUG))
+    # # debugging triggers a lot of printing and logs to a debug directory
+    # DEBUG = variant['util_params']['debug']
+    # os.environ['DEBUG'] = str(int(DEBUG))
 
-    # create logging directory
-    # TODO support Docker
-    exp_id = 'debug' if DEBUG else None
-    experiment_log_dir = setup_logger(variant['env_name'], variant=variant, exp_id=exp_id, base_log_dir=variant['util_params']['base_log_dir'])
+    # # create logging directory
+    # # TODO support Docker
+    # exp_id = 'debug' if DEBUG else None
+    # experiment_log_dir = setup_logger(variant['env_name'], variant=variant, exp_id=exp_id, base_log_dir=variant['util_params']['base_log_dir'])
 
     # optionally save eval trajectories as pkl files
     if variant['algo_params']['dump_eval_paths']:
